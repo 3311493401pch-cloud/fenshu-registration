@@ -1,0 +1,17 @@
+{
+  "name": "fenshu-registration",
+  "version": "1.0.0",
+  "description": "分数线登记实时系统",
+  "private": true,
+  "scripts": {
+    "build:client": "cd client && npm ci && npm run build",
+    "build:server": "cd server && npm ci && npx prisma generate",
+    "build": "npm run build:client && npm run build:server",
+    "start": "cd server && npx prisma migrate deploy && node index.js",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && node index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

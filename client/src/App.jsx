@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { useRef } from 'react';
 import { io } from 'socket.io-client';
@@ -7,8 +7,13 @@ import clsx from 'clsx';
 import wechatQr from './wechat_qr.png';
 
 const isProd = import.meta.env.PROD;
-const API_BASE_URL = isProd ? '/fenshu/api' : 'http://localhost:3001/api';
+const API_BASE_URL = isProd
+  ? (import.meta.env.VITE_API_BASE || '/fenshu/api')
+  : 'http://localhost:3001/api';
 const SOCKET_URL = isProd ? window.location.origin : 'http://localhost:3001';
+const SOCKET_PATH = isProd
+  ? (import.meta.env.VITE_SOCKET_PATH || '/fenshu/socket.io')
+  : '/socket.io';
 const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true
@@ -45,7 +50,7 @@ const BATCH_TYPES = {
   ADMISSION_RETIRED: 'admission_retired'
 };
 
-const ADMIN_ENTRY_PATH = '/fenshu/admin-2026';
+const ADMIN_ENTRY_PATH = import.meta.env.VITE_ADMIN_PATH || '/fenshu/admin-2026';
 
 const BATCH_META = {
   [BATCH_TYPES.NORMAL]: {
@@ -716,7 +721,7 @@ function App() {
     if (!selectedBatch) return undefined;
 
     const socket = io(SOCKET_URL, {
-      path: isProd ? '/fenshu/socket.io' : '/socket.io'
+      path: SOCKET_PATH
     });
 
     socket.on('update_scores', () => {
@@ -2956,3 +2961,4 @@ function App() {
 }
 
 export default App;
+

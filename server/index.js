@@ -367,8 +367,10 @@ app.post(
 );
 app.use(express.json({ limit: '200kb' }));
 
+const SOCKET_IO_PATH = process.env.SOCKET_IO_PATH || '/fenshu/socket.io';
+
 const io = new Server(server, {
-  path: '/fenshu/socket.io',
+  path: SOCKET_IO_PATH,
   cors: {
     origin: CORS_ALLOW_ORIGINS.length === 0 ? true : CORS_ALLOW_ORIGINS,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -1925,6 +1927,19 @@ io.on('connection', (socket) => {
     console.log(`Socket disconnected: ${socket.id}`);
   });
 });
+
+// 生产模式：serve 前端静态文件
+if (isProd) {
+  const clientDistPath = path.join(__dirname, '..', 'client', 'dist');
+  app.use(express.static(clientDistPath));
+  // SPA fallback：所有非 API 请求返回 index.html
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api/') || req.path.startsWith(SOCKET_IO_PATH)) {
+      return next();
+    }
+    res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+}
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
