@@ -1,14 +1,13 @@
 # Render Blueprint 配置文件
 # 在 Render Dashboard 中连接 GitHub 仓库后自动识别此文件
-# 文档: https://render.com/docs/blueprint-spec
 
 services:
   # Web Service - Express 后端 + 前端静态文件
   - type: web
     name: fenshu-registration
     env: node
-    region: singapore  # 新加坡节点（国内访问较快）
-    plan: free         # 免费计划
+    region: singapore
+    plan: free
     buildCommand: |
       cd client && npm ci && VITE_BASE=/ VITE_API_BASE=/api VITE_SOCKET_PATH=/socket.io VITE_ADMIN_PATH=/admin-2026 npm run build && cd ..
       cd server && npm ci && npx prisma generate && cd ..
@@ -25,7 +24,7 @@ services:
           name: fenshu-db
           property: connectionString
       - key: ADMIN_TOTP_SECRET
-        sync: false        # 敏感信息，在 Render Dashboard 手动设置
+        sync: false
       - key: ADMIN_PASSWORD
         sync: false
       - key: ADMIN_JWT_SECRET
@@ -45,12 +44,6 @@ services:
       - key: ADMIN_COOKIE_SAME_SITE
         value: "strict"
 
-  # PostgreSQL 数据库
-  - type: pserv
-    name: fenshu-db
-    env: pgsql
+databases:
+  - name: fenshu-db
     plan: free
-    disk:
-      name: fenshu-db-data
-      mountPath: /var/lib/postgresql/data
-      sizeGB: 1
