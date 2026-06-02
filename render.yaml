@@ -5,13 +5,16 @@ services:
   # Web Service - Express 后端 + 前端静态文件
   - type: web
     name: fenshu-registration
-    env: node
+    runtime: node
     region: singapore
     plan: free
+    healthCheckPath: /health
     buildCommand: |
-      cd client && npm ci && VITE_BASE=/ VITE_API_BASE=/api VITE_SOCKET_PATH=/socket.io VITE_ADMIN_PATH=/admin-2026 npm run build && cd ..
-      cd server && npm ci && npx prisma generate && cd ..
-    startCommand: cd server && npx prisma migrate deploy && node index.js
+      npm --prefix client ci
+      cd client && VITE_BASE=/ VITE_API_BASE=/api VITE_SOCKET_PATH=/socket.io VITE_ADMIN_PATH=/admin-2026 npm run build && cd ..
+      npm --prefix server ci
+      npm --prefix server run prisma:generate
+    startCommand: npm --prefix server run prisma:migrate && node server/index.js
     envVars:
       - key: NODE_ENV
         value: production

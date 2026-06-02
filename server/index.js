@@ -367,6 +367,11 @@ app.post(
 );
 app.use(express.json({ limit: '200kb' }));
 
+// 健康检查端点（供 Render 等平台使用）
+app.get('/health', (_req, res) => {
+  res.json({ status: 'ok' });
+});
+
 const SOCKET_IO_PATH = process.env.SOCKET_IO_PATH || '/fenshu/socket.io';
 
 const io = new Server(server, {
