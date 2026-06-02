@@ -1,20 +1,13 @@
-# Render Blueprint 配置文件
-# 在 Render Dashboard 中连接 GitHub 仓库后自动识别此文件
-
+# Render Blueprint
 services:
-  # Web Service - Express 后端 + 前端静态文件
   - type: web
     name: fenshu-registration
     runtime: node
     region: singapore
     plan: free
     healthCheckPath: /health
-    buildCommand: |
-      npm --prefix client ci
-      cd client && VITE_BASE=/ VITE_API_BASE=/api VITE_SOCKET_PATH=/socket.io VITE_ADMIN_PATH=/admin-2026 npm run build && cd ..
-      npm --prefix server ci
-      npm --prefix server run prisma:generate
-    startCommand: npm --prefix server run prisma:migrate && node server/index.js
+    buildCommand: npm run build
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
@@ -24,7 +17,7 @@ services:
         value: "/socket.io"
       - key: DATABASE_URL
         fromDatabase:
-          name: fenshu-db
+          name: fenshu_db
           property: connectionString
       - key: ADMIN_TOTP_SECRET
         sync: false
@@ -48,5 +41,5 @@ services:
         value: "strict"
 
 databases:
-  - name: fenshu-db
+  - name: fenshu_db
     plan: free
