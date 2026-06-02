@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  fenshu-backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: fenshu-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/data/prod.db
+      - PORT=3000
+      - ADMIN_TOTP_SECRET=${ADMIN_TOTP_SECRET:-}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-}
+      - ADMIN_JWT_SECRET=${ADMIN_JWT_SECRET:-}
+      - ADMIN_TOKEN_TTL=${ADMIN_TOKEN_TTL:-15m}
+      - ADMIN_TOTP_PERIOD=${ADMIN_TOTP_PERIOD:-30}
+      - ADMIN_LOGIN_MAX_FAILURES=${ADMIN_LOGIN_MAX_FAILURES:-5}
+      - ADMIN_LOGIN_LOCK_MINUTES=${ADMIN_LOGIN_LOCK_MINUTES:-15}
+      - ADMIN_COOKIE_SECURE=${ADMIN_COOKIE_SECURE:-false}
+      - ADMIN_COOKIE_SAME_SITE=${ADMIN_COOKIE_SAME_SITE:-strict}
+      - CORS_ALLOW_ORIGINS=${CORS_ALLOW_ORIGINS:-http://localhost:5173,http://localhost:4173}
+      - BLOCKED_SCORE_SUBMIT_IPS=${BLOCKED_SCORE_SUBMIT_IPS:-}
+      - SCORE_SUBMIT_TOKEN_TTL_SECONDS=${SCORE_SUBMIT_TOKEN_TTL_SECONDS:-300}
+      - SCORE_SUBMIT_TOKEN_MAX_PER_MINUTE=${SCORE_SUBMIT_TOKEN_MAX_PER_MINUTE:-20}
+      - SCORE_SUBMIT_IP_NAME_WINDOW_SECONDS=${SCORE_SUBMIT_IP_NAME_WINDOW_SECONDS:-600}
+      - SCORE_SUBMIT_IP_MAX_NAMES=${SCORE_SUBMIT_IP_MAX_NAMES:-3}
+    volumes:
+      - fenshu-data:/app/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  fenshu-frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: fenshu-frontend
+    restart: unless-stopped
+    networks:
+      - app-network
+    depends_on:
+      - fenshu-backend
+
+volumes:
+  fenshu-data:
+    driver: local
+
+networks:
+  app-network:
+    external: true
+    name: projects_app-network

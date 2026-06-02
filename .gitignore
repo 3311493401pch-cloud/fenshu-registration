@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build output
+client/dist/
+dist/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Prisma / SQLite
+server/prisma/*.db
+server/prisma/migrations/
+
+# Uploads
+server/uploads/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Docker
+# (keep Dockerfiles and docker-compose.yml)

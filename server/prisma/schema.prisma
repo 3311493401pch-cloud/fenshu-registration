@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model StudentScore {
+  id            Int      @id @default(autoincrement())
+  batchType     String   @default("normal")
+  name          String
+  institution   String   @default("")
+  qq            String   @default("")
+  highMath      Float?
+  english       Float?
+  compTheory    Float?
+  compPractical Float?
+  totalScore    Float    @default(0)
+  isRecommended Boolean  @default(false)
+  firstChoice   String   @default("")
+  scoreScreenshot String @default("")
+  admissionSchool String @default("")
+  admissionMajor  String @default("")
+  admissionScore  Float  @default(0)
+  volunteers    String // JSON string storing array of volunteers
+  editKey       String   @default("") // Deprecated legacy field kept for compatibility
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([batchType, totalScore, id])
+  @@index([batchType, compTheory, id])
+}
+
+model AppSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
