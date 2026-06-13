@@ -4,12 +4,12 @@
   "description": "分数线登记实时系统",
   "private": true,
   "scripts": {
-    "build:client": "cd client && npm ci && VITE_BASE=/ VITE_API_BASE=/api VITE_SOCKET_PATH=/socket.io VITE_ADMIN_PATH=/admin-2026 npm run build",
-    "build:server": "cd server && npm ci && npm run prisma:generate",
+    "build:client": "npm --prefix client install && npm --prefix client run build",
+    "build:server": "npm --prefix server install && npm --prefix server run prisma:generate",
     "build": "npm run build:client && npm run build:server",
-    "start": "cd server && npm run prisma:migrate && node index.js",
-    "dev:client": "cd client && npm run dev",
-    "dev:server": "cd server && node index.js"
+    "start": "npm --prefix server run prisma:migrate && node server/index.js",
+    "dev:client": "npm --prefix client run dev",
+    "dev:server": "node server/index.js"
   },
   "engines": {
     "node": ">=18"

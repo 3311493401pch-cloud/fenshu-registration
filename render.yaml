@@ -26,7 +26,15 @@ services:
       - key: ADMIN_JWT_SECRET
         sync: false
       - key: CORS_ALLOW_ORIGINS
-        sync: false
+        value: ""
+      - key: VITE_BASE
+        value: "/"
+      - key: VITE_API_BASE
+        value: "/api"
+      - key: VITE_SOCKET_PATH
+        value: "/socket.io"
+      - key: VITE_ADMIN_PATH
+        value: "/admin-2026"
       - key: ADMIN_TOKEN_TTL
         value: "15m"
       - key: ADMIN_TOTP_PERIOD
